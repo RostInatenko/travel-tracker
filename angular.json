@@ -33,6 +33,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/travel-tracker/",
               "budgets": [
                 {
                   "type": "initial",
