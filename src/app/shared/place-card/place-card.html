@@ -1,0 +1,13 @@
+<mat-card class="card" appearance="outlined">
+  <img mat-card-image [src]="place().thumbnailUrl" [alt]="place().name" loading="lazy" />
+  <mat-card-content>
+    <h3 class="name">{{ place().name }}</h3>
+    <p class="category">
+      <mat-icon inline>place</mat-icon>
+      {{ place().category }}
+    </p>
+    @if (place().address) {
+      <p class="address">{{ place().address }}</p>
+    }
+  </mat-card-content>
+</mat-card>

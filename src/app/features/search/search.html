@@ -1,0 +1,43 @@
+<section class="search">
+  <form class="search-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="e.g. Lviv" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Keyword (optional)</mat-label>
+      <input matInput formControlName="keyword" placeholder="e.g. museum" />
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit">
+      <mat-icon>search</mat-icon>
+      Search
+    </button>
+  </form>
+
+  @switch (state().status) {
+    @case ('idle') {
+      <p class="hint">Enter a city to discover places to visit.</p>
+    }
+    @case ('loading') {
+      <div class="center">
+        <mat-progress-spinner mode="indeterminate" diameter="48" />
+      </div>
+    }
+    @case ('error') {
+      <p class="error">Something went wrong. Please try again.</p>
+    }
+    @case ('loaded') {
+      @if (places().length === 0) {
+        <p class="hint">No places found. Try a different city or keyword.</p>
+      } @else {
+        <div class="grid">
+          @for (place of places(); track place.id) {
+            <app-place-card [place]="place" />
+          }
+        </div>
+      }
+    }
+  }
+</section>

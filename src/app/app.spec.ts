@@ -22,6 +22,6 @@ describe('App', () => {
   it('has the expected title', () => {
     const fixture = TestBed.createComponent(App);
     // `title` is a signal; bracket access sidesteps the `protected` modifier.
-    expect((fixture.componentInstance as any).title()).toBe('travel-tracker');
+    expect((fixture.componentInstance as any).title()).toBe('Travel Tracker');
   });
 });
