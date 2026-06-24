@@ -13,7 +13,8 @@ ones you want to visit to a wishlist that survives page reloads.
 - **Wishlist** — save/remove places; the list is stored in `localStorage` and
   restored on reload.
 - **10-minute cache** — repeat searches for the same city within ten minutes are
-  served from memory instead of calling the API again.
+  served from a `localStorage`-backed cache instead of calling the API again, so
+  it also holds across page reloads.
 
 ## Tech stack
 
@@ -40,9 +41,10 @@ Components ──► PlacesApi (abstract contract) ──► GeoapifyPlacesApi (
 - **`core/services/geoapify.ts`** is the only file aware of Geoapify. It calls the
   API and maps the raw responses into the app's own models. Switching providers is
   a one-line change in `app.config.ts`.
-- **`core/cache/ttl-cache.ts`** is a small generic time-to-live cache. Search
-  results are cached per city; the keyword filter runs in memory afterwards, so
-  changing the keyword for an already-fetched city never triggers a new request.
+- **`core/cache/ttl-cache.ts`** is a small generic time-to-live cache, optionally
+  mirrored to `localStorage` so the TTL survives reloads. Search results are cached
+  per city; the keyword filter runs in memory afterwards, so changing the keyword
+  for an already-fetched city never triggers a new request.
 - **`core/services/wishlist-store.ts`** holds the wishlist in a signal, mirrors it
   to `localStorage` via an `effect`, and restores it on startup.
 

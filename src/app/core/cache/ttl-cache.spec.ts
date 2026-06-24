@@ -8,6 +8,7 @@ describe('TtlCache', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    localStorage.clear();
     cache = new TtlCache<string>(TEN_MINUTES);
   });
 
@@ -39,5 +40,20 @@ describe('TtlCache', () => {
     cache.clear();
     expect(cache.get('lviv')).toBeNull();
     expect(cache.get('kyiv')).toBeNull();
+  });
+
+  it('restores fresh entries from storage in a new instance (survives reload)', () => {
+    const first = new TtlCache<string>(TEN_MINUTES, 'cache-key');
+    first.set('lviv', 'data');
+    const reloaded = new TtlCache<string>(TEN_MINUTES, 'cache-key');
+    expect(reloaded.get('lviv')).toBe('data');
+  });
+
+  it('does not restore entries that expired before reload', () => {
+    const first = new TtlCache<string>(TEN_MINUTES, 'cache-key');
+    first.set('lviv', 'data');
+    vi.advanceTimersByTime(TEN_MINUTES);
+    const reloaded = new TtlCache<string>(TEN_MINUTES, 'cache-key');
+    expect(reloaded.get('lviv')).toBeNull();
   });
 });

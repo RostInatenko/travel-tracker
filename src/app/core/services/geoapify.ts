@@ -59,7 +59,7 @@ function friendlyCategory(categories: string[]): string {
 export class GeoapifyPlacesApi extends PlacesApi {
   private readonly http = inject(HttpClient);
   private readonly cfg = environment.geoapify;
-  private readonly searchCache = new TtlCache<Place[]>(CACHE_TTL_MS);
+  private readonly searchCache = new TtlCache<Place[]>(CACHE_TTL_MS, 'travel-tracker.places-cache');
 
   geocodeCity(city: string): Observable<GeoPoint | null> {
     const params = new HttpParams()
