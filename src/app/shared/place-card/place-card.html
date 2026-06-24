@@ -1,4 +1,4 @@
-<mat-card class="card" appearance="outlined">
+<mat-card class="card" appearance="outlined" [routerLink]="['/place', place().id]">
   <img mat-card-image [src]="place().thumbnailUrl" [alt]="place().name" loading="lazy" />
   <mat-card-content>
     <h3 class="name">{{ place().name }}</h3>

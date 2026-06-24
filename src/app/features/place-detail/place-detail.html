@@ -1,0 +1,69 @@
+<a mat-button routerLink="/search" class="back">
+  <mat-icon>arrow_back</mat-icon>
+  Back to search
+</a>
+
+@switch (state().status) {
+  @case ('loading') {
+    <div class="center">
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    </div>
+  }
+  @case ('error') {
+    <p class="error">Couldn't load this place. Please try again.</p>
+  }
+  @case ('notfound') {
+    <p class="hint">This place could not be found.</p>
+  }
+  @case ('loaded') {
+    @if (details(); as place) {
+      <article class="detail">
+        <img class="hero" [src]="place.imageUrl || place.thumbnailUrl" [alt]="place.name" />
+        <h1>{{ place.name }}</h1>
+
+        @if (place.categories.length) {
+          <mat-chip-set>
+            @for (cat of place.categories; track cat) {
+              <mat-chip>{{ cat }}</mat-chip>
+            }
+          </mat-chip-set>
+        }
+
+        <dl class="facts">
+          <dt>Rating</dt>
+          <dd>Not provided by this data source</dd>
+
+          <dt>Type</dt>
+          <dd>{{ place.category }}</dd>
+
+          @if (place.address) {
+            <dt>Address</dt>
+            <dd>{{ place.address }}</dd>
+          }
+
+          <dt>Coordinates</dt>
+          <dd>{{ place.location.lat }}, {{ place.location.lon }}</dd>
+
+          @if (place.website) {
+            <dt>Website</dt>
+            <dd>
+              <a [href]="place.website" target="_blank" rel="noopener">{{ place.website }}</a>
+            </dd>
+          }
+
+          @if (wikipediaUrl()) {
+            <dt>Wikipedia</dt>
+            <dd>
+              <a [href]="wikipediaUrl()" target="_blank" rel="noopener">View on Wikipedia</a>
+            </dd>
+          }
+        </dl>
+
+        <p class="note">
+          User tips and reviews aren't available from the free Geoapify data; this page
+          shows the metadata the API provides.
+        </p>
+      </article>
+    }
+  }
+}
