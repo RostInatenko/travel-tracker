@@ -1,59 +1,116 @@
-# TravelTracker
+# Travel Tracker
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.3.
+A web app for discovering tourist places by city and keyword and saving the
+ones you want to visit to a wishlist that survives page reloads.
 
-## Development server
+**Live demo:** https://rostinatenko.github.io/travel-tracker/
 
-To start a local development server, run:
+## Features
 
-```bash
-ng serve
+- **Search** tourist places by city (location) and an optional keyword.
+- **Place details** on a deep-linkable page: type, address, coordinates, a map
+  image, website, and a Wikipedia link.
+- **Wishlist** — save/remove places; the list is stored in `localStorage` and
+  restored on reload.
+- **10-minute cache** — repeat searches for the same city within ten minutes are
+  served from memory instead of calling the API again.
+
+## Tech stack
+
+- **Angular 22** — standalone components, signals, zoneless change detection,
+  the built-in control flow (`@if` / `@for` / `@switch`), and lazy-loaded routes.
+- **Angular Material** for UI.
+- **Geoapify** Geocoding, Places, Place Details, and Static Maps APIs.
+- **RxJS** for the search pipeline (`debounceTime`, `switchMap`).
+- **Vitest** for unit tests.
+
+## Architecture
+
+The app is intentionally decoupled from the data provider:
+
+```
+Components ──► PlacesApi (abstract contract) ──► GeoapifyPlacesApi (implementation)
+                                                   ├─ HttpClient
+                                                   ├─ TtlCache (10-minute cache)
+                                                   └─ maps raw API JSON ──► app models
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **`core/services/places-api.ts`** defines an abstract `PlacesApi` class used as
+  the dependency-injection token. Components depend only on this contract.
+- **`core/services/geoapify.ts`** is the only file aware of Geoapify. It calls the
+  API and maps the raw responses into the app's own models. Switching providers is
+  a one-line change in `app.config.ts`.
+- **`core/cache/ttl-cache.ts`** is a small generic time-to-live cache. Search
+  results are cached per city; the keyword filter runs in memory afterwards, so
+  changing the keyword for an already-fetched city never triggers a new request.
+- **`core/services/wishlist-store.ts`** holds the wishlist in a signal, mirrors it
+  to `localStorage` via an `effect`, and restores it on startup.
 
-## Code scaffolding
+### Project structure
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+src/app/
+├── core/
+│   ├── models/place.ts          # Place, PlaceDetails, GeoPoint
+│   ├── cache/ttl-cache.ts       # generic TTL cache (+ tests)
+│   └── services/
+│       ├── places-api.ts        # abstract PlacesApi contract
+│       ├── geoapify.ts          # Geoapify implementation
+│       └── wishlist-store.ts    # wishlist state + localStorage (+ tests)
+├── features/
+│   ├── search/                  # /search
+│   ├── place-detail/            # /place/:id
+│   └── wishlist/                # /wishlist
+└── shared/place-card/           # reusable card used by search & wishlist
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## A note on ratings and reviews
+
+The assignment mentions ratings and user reviews. Geoapify's free tier does not
+provide user ratings or reviews, so the detail page shows the metadata the API
+does provide (type, address, website, Wikipedia) and states clearly that ratings
+and reviews are unavailable. The provider lives behind the `PlacesApi` abstraction,
+so a provider that offers reviews could be added without changing any feature code.
+
+## Getting started
+
+### Prerequisites
+
+- Node.js `>= 24.15` (or `>= 22.22`) and npm.
+- A free [Geoapify](https://www.geoapify.com/) API key.
+
+### Setup
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
+Add your Geoapify key in `src/environments/environment.ts` and
+`src/environments/environment.development.ts`:
 
-To build the project run:
+```ts
+export const environment = {
+  production: false,
+  geoapify: {
+    apiKey: 'YOUR_GEOAPIFY_KEY',
+    // ...urls
+  },
+};
+```
+
+> The Geoapify key is a client-side key — it ships in the browser bundle, which is
+> expected for this kind of API. In production it is restricted to the deployed
+> origin from the Geoapify dashboard.
+
+### Run
 
 ```bash
-ng build
+npm start        # dev server at http://localhost:4200
+npm test         # unit tests (Vitest)
+npm run build    # production build to dist/
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Deployment
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+The app is a static single-page application deployed to **GitHub Pages** via a
+GitHub Actions workflow on every push to `main`.
