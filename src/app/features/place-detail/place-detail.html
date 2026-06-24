@@ -18,7 +18,24 @@
   @case ('loaded') {
     @if (details(); as place) {
       <article class="detail">
-        <img class="hero" [src]="place.imageUrl || place.thumbnailUrl" [alt]="place.name" />
+        <img class="hero" [src]="selectedPhoto()" [alt]="place.name" />
+
+        @if (galleryImages().length > 1) {
+          <div class="thumbs">
+            @for (img of galleryImages(); track img) {
+              <button
+                type="button"
+                class="thumb"
+                [class.active]="img === selectedPhoto()"
+                [attr.aria-label]="'Show photo'"
+                (click)="selectPhoto(img)"
+              >
+                <img [src]="img" alt="" loading="lazy" />
+              </button>
+            }
+          </div>
+        }
+
         <div class="header">
           <h1>{{ place.name }}</h1>
           <button mat-flat-button color="primary" (click)="toggleWishlist()">
@@ -33,6 +50,13 @@
               <mat-chip>{{ cat }}</mat-chip>
             }
           </mat-chip-set>
+        }
+
+        @if (media(); as m) {
+          <section class="about">
+            <h2>About</h2>
+            <p>{{ m.extract }}</p>
+          </section>
         }
 
         <dl class="facts">
@@ -65,10 +89,7 @@
           }
         </dl>
 
-        <p class="note">
-          User tips and reviews aren't available from the free Geoapify data; this page
-          shows the metadata the API provides.
-        </p>
+        <p class="note">Ratings and user reviews aren't available from the free data source.</p>
       </article>
     }
   }
