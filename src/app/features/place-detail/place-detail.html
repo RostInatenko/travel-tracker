@@ -19,7 +19,13 @@
     @if (details(); as place) {
       <article class="detail">
         <img class="hero" [src]="place.imageUrl || place.thumbnailUrl" [alt]="place.name" />
-        <h1>{{ place.name }}</h1>
+        <div class="header">
+          <h1>{{ place.name }}</h1>
+          <button mat-flat-button color="primary" (click)="toggleWishlist()">
+            <mat-icon>{{ saved() ? 'favorite' : 'favorite_border' }}</mat-icon>
+            {{ saved() ? 'Saved' : 'Add to wishlist' }}
+          </button>
+        </div>
 
         @if (place.categories.length) {
           <mat-chip-set>

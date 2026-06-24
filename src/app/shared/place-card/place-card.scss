@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   height: 100%;
   cursor: pointer;
 }
@@ -6,6 +7,13 @@
 .card img {
   height: 160px;
   object-fit: cover;
+}
+
+.fav {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .name {

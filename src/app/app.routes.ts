@@ -11,5 +11,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/place-detail/place-detail').then((m) => m.PlaceDetailPage),
   },
+  {
+    path: 'wishlist',
+    loadComponent: () => import('./features/wishlist/wishlist').then((m) => m.WishlistPage),
+  },
   { path: '**', redirectTo: 'search' },
 ];

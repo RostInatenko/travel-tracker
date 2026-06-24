@@ -1,5 +1,13 @@
 <mat-card class="card" appearance="outlined" [routerLink]="['/place', place().id]">
   <img mat-card-image [src]="place().thumbnailUrl" [alt]="place().name" loading="lazy" />
+  <button
+    mat-icon-button
+    class="fav"
+    [attr.aria-label]="saved() ? 'Remove from wishlist' : 'Add to wishlist'"
+    (click)="toggle($event)"
+  >
+    <mat-icon>{{ saved() ? 'favorite' : 'favorite_border' }}</mat-icon>
+  </button>
   <mat-card-content>
     <h3 class="name">{{ place().name }}</h3>
     <p class="category">

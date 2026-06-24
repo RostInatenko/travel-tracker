@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PlacesApi } from '../../core/services/places-api';
+import { WishlistStore } from '../../core/services/wishlist-store';
 import { PlaceDetails } from '../../core/models/place';
 
 type DetailState =
@@ -31,6 +32,7 @@ type DetailState =
 })
 export class PlaceDetailPage {
   private readonly placesApi = inject(PlacesApi);
+  private readonly wishlist = inject(WishlistStore);
 
   readonly id = input.required<string>();
 
@@ -57,6 +59,18 @@ export class PlaceDetailPage {
     const s = this.state();
     return s.status === 'loaded' ? s.details : null;
   });
+
+  protected readonly saved = computed(() => {
+    const place = this.details();
+    return place ? this.wishlist.has(place.id) : false;
+  });
+
+  protected toggleWishlist(): void {
+    const place = this.details();
+    if (place) {
+      this.wishlist.toggle(place);
+    }
+  }
 
   protected readonly wikipediaUrl = computed(() => {
     const wiki = this.details()?.wikipedia;

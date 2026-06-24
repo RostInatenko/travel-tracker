@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { WishlistStore } from './core/services/wishlist-store';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,5 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class App {
   protected readonly title = signal('Travel Tracker');
+  protected readonly wishlist = inject(WishlistStore);
 }

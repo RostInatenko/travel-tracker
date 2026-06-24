@@ -1,0 +1,13 @@
+<h2>Your wishlist</h2>
+
+@if (items().length === 0) {
+  <p class="hint">
+    No saved places yet. <a routerLink="/search">Find places to visit.</a>
+  </p>
+} @else {
+  <div class="grid">
+    @for (place of items(); track place.id) {
+      <app-place-card [place]="place" />
+    }
+  </div>
+}

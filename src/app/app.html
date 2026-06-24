@@ -2,6 +2,9 @@
   <a class="brand" routerLink="/search">{{ title() }}</a>
   <span class="spacer"></span>
   <a mat-button routerLink="/search" routerLinkActive="active">Search</a>
+  <a mat-button routerLink="/wishlist" routerLinkActive="active">
+    Wishlist ({{ wishlist.count() }})
+  </a>
 </mat-toolbar>
 
 <main class="content">
