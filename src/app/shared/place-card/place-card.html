@@ -1,4 +1,12 @@
-<mat-card class="card" appearance="outlined" [routerLink]="['/place', place().id]">
+<mat-card
+  class="card"
+  appearance="outlined"
+  role="link"
+  tabindex="0"
+  [attr.aria-label]="'View details for ' + place().name"
+  (click)="open()"
+  (keydown.enter)="open()"
+>
   <img mat-card-image [src]="place().thumbnailUrl" [alt]="place().name" loading="lazy" />
   <button
     mat-icon-button

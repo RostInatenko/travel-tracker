@@ -4,6 +4,11 @@
   cursor: pointer;
 }
 
+.card:focus-visible {
+  outline: 2px solid #1565c0;
+  outline-offset: 2px;
+}
+
 .card img {
   height: 160px;
   object-fit: cover;
