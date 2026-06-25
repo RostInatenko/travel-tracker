@@ -28,15 +28,23 @@
     @case ('error') {
       <p class="error">Something went wrong. Please try again.</p>
     }
+    @case ('notfound') {
+      <p class="hint">We couldn't find that city. Check the spelling and try again.</p>
+    }
     @case ('loaded') {
       @if (places().length === 0) {
-        <p class="hint">No places found. Try a different city or keyword.</p>
+        <p class="hint">No places match your search. Try a different keyword.</p>
       } @else {
         <div class="grid">
-          @for (place of places(); track place.id) {
+          @for (place of visiblePlaces(); track place.id) {
             <app-place-card [place]="place" />
           }
         </div>
+        @if (hasMore()) {
+          <div class="load-more">
+            <button #more mat-stroked-button (click)="loadMore()">Load more</button>
+          </div>
+        }
       }
     }
   }

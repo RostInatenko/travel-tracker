@@ -79,18 +79,22 @@ export class GeoapifyPlacesApi extends PlacesApi {
       );
   }
 
-  search(city: string, keyword: string): Observable<Place[]> {
+  search(city: string, keyword: string): Observable<Place[] | null> {
     const cityKey = city.trim().toLowerCase();
     const cached = this.searchCache.get(cityKey);
-
-    const places$ = cached
-      ? of(cached)
-      : this.fetchPlacesForCity(city).pipe(
-          tap((places) => this.searchCache.set(cityKey, places)),
-        );
+    if (cached) {
+      return of(this.filterByKeyword(cached, keyword));
+    }
 
     // Keyword is filtered in memory so re-searching a cached city never re-hits the API.
-    return places$.pipe(map((places) => this.filterByKeyword(places, keyword)));
+    return this.fetchPlacesForCity(city).pipe(
+      tap((places) => {
+        if (places) {
+          this.searchCache.set(cityKey, places);
+        }
+      }),
+      map((places) => (places ? this.filterByKeyword(places, keyword) : null)),
+    );
   }
 
   getDetails(id: string): Observable<PlaceDetails | null> {
@@ -106,11 +110,11 @@ export class GeoapifyPlacesApi extends PlacesApi {
       );
   }
 
-  private fetchPlacesForCity(city: string): Observable<Place[]> {
+  private fetchPlacesForCity(city: string): Observable<Place[] | null> {
     return this.geocodeCity(city).pipe(
       switchMap((point) => {
         if (!point) {
-          return of<Place[]>([]);
+          return of<Place[] | null>(null);
         }
         const params = new HttpParams()
           .set('categories', TOURISM_CATEGORIES)

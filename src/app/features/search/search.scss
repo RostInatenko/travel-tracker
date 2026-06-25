@@ -22,6 +22,12 @@
   padding: 48px 0;
 }
 
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
 .hint,
 .error {
   text-align: center;
