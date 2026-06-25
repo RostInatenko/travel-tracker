@@ -55,9 +55,11 @@ export class PlaceDetailPage {
           if (!details.wikipedia) {
             return of({ status: 'loaded', details, media: null } as DetailState);
           }
-          return this.wikipedia
-            .getMedia(details.wikipedia)
-            .pipe(map((media) => ({ status: 'loaded', details, media }) as DetailState));
+          return this.wikipedia.getMedia(details.wikipedia).pipe(
+            map((media) => ({ status: 'loaded', details, media }) as DetailState),
+            // Show the place right away; fill in photos/description when Wikipedia responds.
+            startWith({ status: 'loaded', details, media: null } as DetailState),
+          );
         }),
         startWith({ status: 'loading' } as DetailState),
         catchError(() => of({ status: 'error' } as DetailState)),
